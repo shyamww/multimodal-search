@@ -60,6 +60,9 @@ python manage.py migrate
 # Start the API server
 uvicorn search_app.api:app --host 0.0.0.0 --port 8000
 
+# need to run this if pandas is missing
+# pip install pandas
+
 # In a separate terminal, start the web interface
 python manage.py runserver 0.0.0.0:8080
 ```
