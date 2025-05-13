@@ -54,6 +54,25 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
+### Dataset Preperation
+```bash
+# Create a directory for the dataset
+mkdir -p data/raw/coco
+cd data/raw/coco
+
+# Download COCO validation images and annotations
+curl -O http://images.cocodataset.org/zips/val2017.zip
+curl -O http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+
+# Extract files
+unzip val2017.zip
+unzip annotations_trainval2017.zip
+
+# Move back to project root directory
+cd ../../../
+```
+
+
 ### Running the System
 
 ```bash
