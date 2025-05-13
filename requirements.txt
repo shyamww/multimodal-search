@@ -12,7 +12,8 @@ torch==2.1.0
 torchvision==0.16.0
 transformers==4.35.0
 pillow==10.1.0
-numpy==25.0.1
+numpy==1.24.4
+
 
 # Utilities
 python-multipart==0.0.6
