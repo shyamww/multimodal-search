@@ -66,3 +66,7 @@ embedding_generator = None
 vector_storage = None
 search_engine = None
 data_ingestor = None
+
+# Run the server when executed directly
+if __name__ == "__main__":
+    uvicorn.run("search_app.api:app", host="0.0.0.0", port=8000, reload=True)
