@@ -1,0 +1,33 @@
+# Environment
+venv/
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database and vector storage
+*.sqlite3
+*.db
+*.faiss
+*.index
+
+# Large dataset files
+*.zip
+data/raw/coco/val2017/
+data/raw/coco/annotations/*.json
+data/processed/
+
+# Logs and temporary files
+logs/*.log
+*.log
+*.tmp
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db

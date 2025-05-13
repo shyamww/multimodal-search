@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-form {
+        margin-bottom: 2rem;
+    }
+    
+    .result-details {
+        height: 100px;
+        overflow: hidden;
+    }
+    
+    .similarity-score {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .query-metrics {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Search</h2>
+        <p class="lead">Search for images using natural language</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <form action="{% url 'search' %}" method="get" class="d-flex search-form">
+            <input type="text" name="query" class="form-control" value="{{ query|default:'' }}" placeholder="Enter your search query..." required>
+            <button type="submit" class="btn btn-primary ms-2">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if query %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>Results for "{{ query }}"</h3>
+            <p class="query-metrics">
+                Found {{ count }} results in {{ query_time|floatformat:2 }} ms
+                {% if performance %}
+                    (Embedding: {{ performance.embedding_time_ms|floatformat:2 }} ms, 
+                    Search: {{ performance.search_time_ms|floatformat:2 }} ms)
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    {% if results %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for result in results %}
+                <div class="col">
+                    <div class="card h-100 result-card">
+                        {% if result.image_url %}
+                            <div class="position-relative">
+                                <img src="{{ result.image_url }}" class="card-img-top result-image" alt="{{ result.metadata.title }}">
+                                <span class="similarity-score">
+                                    {{ result.distance|floatformat:2 }}
+                                    <i class="fas fa-bolt ms-1"></i>
+                                </span>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ result.metadata.title }}</h5>
+                            <div class="result-details">
+                                <p class="card-text">{{ result.metadata.text }}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            {% if result.metadata.source %}
+                                <small class="text-muted">Source: {{ result.metadata.source }}</small>
+                            {% endif %}
+                            
+                            {% if result.metadata.tags %}
+                                <div class="mt-2">
+                                    {% for tag in result.metadata.tags %}
+                                        <span class="badge bg-secondary me-1">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No results found for "{{ query }}". Try a different search term.
+        </div>
+    {% endif %}
+{% endif %}
+
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any custom JavaScript for the search page here
+</script>
+{% endblock %}

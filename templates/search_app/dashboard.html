@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .metric-card {
+        border-radius: 10px;
+        transition: transform 0.2s;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .metric-icon {
+        font-size: 2rem;
+        opacity: 0.8;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    
+    .progress {
+        height: 8px;
+    }
+    
+    .performance-table {
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>System Dashboard</h2>
+        <p class="lead">Monitor performance metrics and system resources</p>
+    </div>
+</div>
+
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% else %}
+    <!-- System Resource Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white metric-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">CPU Usage</h6>
+                            <div class="metric-value">{{ system.cpu.percent|default:"0" }}%</div>
+                        </div>
+                        <div class="metric-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-3 bg-light bg-opacity-25">
+                        <div class="progress-bar bg-white" role="progressbar" style="width: {{ system.cpu.percent|default:"0" }}%"></div>
+                    </div>
+                    <small class="text-white-50 mt-2 d-block">{{ system.cpu.count }} cores available</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-success text-white metric-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Memory Usage</h6>
+                            <div class="metric-value">{{ system.memory.percent|default:"0" }}%</div>
+                        </div>
+                        <div class="metric-icon">
+                            <i class="fas fa-memory"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-3 bg-light bg-opacity-25">
+                        <div class="progress-bar bg-white" role="progressbar" style="width: {{ system.memory.percent|default:"0" }}%"></div>
+                    </div>
+                    <small class="text-white-50 mt-2 d-block">{{ system.memory.used_gb|floatformat:2 }} / {{ system.memory.total_gb|floatformat:2 }} GB used</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-info text-white metric-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Items Indexed</h6>
+                            <div class="metric-value">{{ item_count|default:"0" }}</div>
+                        </div>
+                        <div class="metric-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-3 bg-light bg-opacity-25">
+                        <div class="progress-bar bg-white" role="progressbar" style="width: {{ item_count|default:"0"|divisibleby:10 }}%"></div>
+                    </div>
+                    <small class="text-white-50 mt-2 d-block">Vector database status</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance Metrics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        Search Performance Metrics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <h6>Avg Query Time</h6>
+                            <div class="display-6">{{ performance.avg_query_time_ms|default:"0"|floatformat:2 }} ms</div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <h6>Queries Processed</h6>
+                            <div class="display-6">{{ performance.queries_processed|default:"0" }}</div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <h6>Errors</h6>
+                            <div class="display-6">{{ performance.errors|default:"0" }}</div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <h6>Embedding Avg Time</h6>
+                            <div class="display-6">{{ performance.embedding_stats.avg_text_embedding_time|default:"0"|floatformat:3 }} s</div>
+                        </div>
+                    </div>
+                    
+                    <table class="table table-sm performance-table mt-4">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                                <th>Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if performance.embedding_stats %}
+                                <tr>
+                                    <td>Text Embedding Avg Time</td>
+                                    <td>{{ performance.embedding_stats.avg_text_embedding_time|default:"0"|floatformat:4 }}</td>
+                                    <td>seconds</td>
+                                </tr>
+                                <tr>
+                                    <td>Image Embedding Avg Time</td>
+                                    <td>{{ performance.embedding_stats.avg_image_embedding_time|default:"0"|floatformat:4 }}</td>
+                                    <td>seconds</td>
+                                </tr>
+                            {% endif %}
+                            
+                            {% if performance.storage_stats %}
+                                <tr>
+                                    <td>Vector Add Avg Time</td>
+                                    <td>{{ performance.storage_stats.avg_add_time|default:"0"|floatformat:4 }}</td>
+                                    <td>seconds</td>
+                                </tr>
+                                <tr>
+                                    <td>Vector Search Avg Time</td>
+                                    <td>{{ performance.storage_stats.avg_search_time|default:"0"|floatformat:4 }}</td>
+                                    <td>seconds</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Items in Storage</td>
+                                    <td>{{ performance.storage_stats.total_items|default:"0" }}</td>
+                                    <td>items</td>
+                                </tr>
+                            {% endif %}
+                            
+                            {% if performance.min_query_time_ms %}
+                                <tr>
+                                    <td>Min Query Time</td>
+                                    <td>{{ performance.min_query_time_ms|floatformat:2 }}</td>
+                                    <td>ms</td>
+                                </tr>
+                                <tr>
+                                    <td>Max Query Time</td>
+                                    <td>{{ performance.max_query_time_ms|floatformat:2 }}</td>
+                                    <td>ms</td>
+                                </tr>
+                            {% endif %}
+                            
+                            {% if performance.avg_memory_usage_mb %}
+                                <tr>
+                                    <td>Avg Memory Usage Per Query</td>
+                                    <td>{{ performance.avg_memory_usage_mb|floatformat:2 }}</td>
+                                    <td>MB</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Details -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-server me-2"></i>
+                        Disk Usage
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ system.disk.percent|default:"0" }}%">
+                                {{ system.disk.percent|default:"0" }}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h6>Used</h6>
+                            <p class="lead">{{ system.disk.used_gb|floatformat:2 }} GB</p>
+                        </div>
+                        <div class="col-6">
+                            <h6>Total</h6>
+                            <p class="lead">{{ system.disk.total_gb|floatformat:2 }} GB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>
+                        System Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-center mb-4">
+                        <div class="bg-success text-white p-2 rounded-circle me-3">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">System Operational</h5>
+                            <small class="text-muted">All components running normally</small>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Embedding Service
+                            <span class="badge bg-success rounded-pill">Active</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Vector Database
+                            <span class="badge bg-success rounded-pill">Active</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Search API
+                            <span class="badge bg-success rounded-pill">Active</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Refresh the dashboard every 30 seconds
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+</script>
+{% endblock %}

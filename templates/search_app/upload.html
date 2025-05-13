@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Content{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Upload Content</h2>
+        <p class="lead">Add your own images and text descriptions to the search index</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Upload Form</h5>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                        <div class="form-text">Select an image file (JPG, PNG, etc.)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter a title for your content">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="text" class="form-label">Description</label>
+                        <textarea class="form-control" id="text" name="text" rows="4" placeholder="Describe your image in detail" required></textarea>
+                        <div class="form-text">Provide a detailed description to improve search results</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tags</label>
+                        <input type="text" class="form-control" id="tags" name="tags" placeholder="nature, landscape, mountains">
+                        <div class="form-text">Comma-separated list of tags</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i> Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+        <div class="alert alert-info">
+            <h5><i class="fas fa-info-circle me-2"></i>How it works</h5>
+            <p>When you upload an image and description:</p>
+            <ol>
+                <li>Your image and text are processed to generate embeddings</li>
+                <li>These embeddings are stored in a vector database</li>
+                <li>Your content becomes searchable immediately</li>
+            </ol>
+            <p class="mb-0">Better descriptions and relevant tags improve search accuracy!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Preview the uploaded image before submission
+    document.getElementById('image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // You could add image preview functionality here
+        }
+    });
+</script>
+{% endblock %}

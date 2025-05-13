@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Batch Upload{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Batch Upload</h2>
+        <p class="lead">Process and index larger datasets</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Batch Processing Form</h5>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'batch_upload' %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="dataset_type" class="form-label">Dataset Type</label>
+                        <select class="form-select" id="dataset_type" name="dataset_type" required>
+                            <option value="" selected disabled>Select a dataset type</option>
+                            <option value="coco">COCO Captions</option>
+                            <option value="unsplash">Unsplash Dataset</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dataset_path" class="form-label">Dataset Path</label>
+                        <input type="text" class="form-control" id="dataset_path" name="dataset_path" required>
+                        <div class="form-text">
+                            For COCO: Path to annotations JSON file<br>
+                            For Unsplash: Path to CSV file
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="limit" class="form-label">Item Limit</label>
+                        <input type="number" class="form-control" id="limit" name="limit" min="1" max="5000" value="1000">
+                        <div class="form-text">Maximum number of items to process (1-5000)</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cogs me-2"></i> Start Processing
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Dataset Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-3">COCO Captions Dataset</h6>
+                <p>The COCO Captions dataset contains images with multiple human-annotated captions.</p>
+                <p>
+                    <strong>Structure:</strong>
+                    <ul>
+                        <li>The dataset should be organized with annotations in a JSON file</li>
+                        <li>Images should be in a corresponding images directory</li>
+                    </ul>
+                </p>
+                <p>
+                    <strong>Example path:</strong> /path/to/coco/annotations/captions_val2017.json
+                </p>
+
+                <hr>
+
+                <h6 class="mb-3">Unsplash Dataset</h6>
+                <p>The Unsplash dataset contains high-quality photographs with descriptions.</p>
+                <p>
+                    <strong>Structure:</strong>
+                    <ul>
+                        <li>The dataset should be in CSV format</li>
+                        <li>It should include columns for photo URLs and descriptions</li>
+                    </ul>
+                </p>
+                <p>
+                    <strong>Example path:</strong> /path/to/unsplash/photos.csv
+                </p>
+
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Note:</strong> Processing large datasets may take some time and use significant system resources.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

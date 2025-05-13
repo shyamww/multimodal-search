@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Multi-Modal Search Engine{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 text-center">
+        <h1 class="display-4 mb-4">Multi-Modal Search Engine</h1>
+        <p class="lead mb-5">Search through images and text using advanced embedding technology</p>
+
+        <div class="search-container mb-5">
+            <form action="{% url 'search' %}" method="get" class="d-flex">
+                <input type="text" name="query" class="form-control form-control-lg" placeholder="Enter your search query..." required>
+                <button type="submit" class="btn btn-primary btn-lg ms-2">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-search fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Text Search</h5>
+                <p class="card-text">Search for images using natural language queries</p>
+                <a href="{% url 'search' %}" class="btn btn-outline-primary">Try Text Search</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-upload fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Upload Content</h5>
+                <p class="card-text">Add your own images and descriptions to the index</p>
+                <a href="{% url 'upload' %}" class="btn btn-outline-primary">Upload Content</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Performance Metrics</h5>
+                <p class="card-text">View system performance and statistics</p>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">View Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if api_status %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-database me-2"></i>Items Indexed</h6>
+                        <p class="lead">{{ api_status.items_indexed|default:"0" }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-microchip me-2"></i>CPU Usage</h6>
+                        <p class="lead">{{ api_status.system.cpu.percent|default:"0" }}%</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-memory me-2"></i>Memory Usage</h6>
+                        <p class="lead">{{ api_status.system.memory.used_gb|floatformat:2 }} / {{ api_status.system.memory.total_gb|floatformat:2 }} GB</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
