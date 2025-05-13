@@ -75,7 +75,10 @@ cd ../../../
 
 ### Running the System
 
+
 ```bash
+python setup.py
+
 # Start the API server
 uvicorn search_app.api:app --host 0.0.0.0 --port 8000
 
