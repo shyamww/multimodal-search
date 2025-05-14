@@ -106,6 +106,11 @@ curl -X GET "http://localhost:8000/api/status" | python -m json.tool
 
 Access the web interface at http://localhost:8080
 
+
+### Performance report gerenate
+```bash
+curl http://localhost:8000/api/status | python -m json.tool > performance_data.json
+```
 ## 📂 Project Structure
 
 ```
