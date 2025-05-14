@@ -50,6 +50,9 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
+# need to run
+pip install requests  
+
 # Initialize database
 python manage.py migrate
 ```
