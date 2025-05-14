@@ -52,6 +52,8 @@ pip install -r requirements.txt
 
 # need to run
 pip install requests  
+python setup.py
+
 
 # Initialize database
 python manage.py migrate
